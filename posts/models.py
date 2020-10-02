@@ -16,6 +16,9 @@ class Post(models.Model):
     # i.e. continue deleting the dependent models as well. 
     created = models.DateTimeField(auto_now_add=True)
     #we add when the post was created and add the option to add the time as now.
+    
+    def __str__(self):
+        return self.title    
 
     class Meta:
         ordering = ['-created']
