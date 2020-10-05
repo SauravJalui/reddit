@@ -10,9 +10,11 @@ class PostSerializer(serializers.ModelSerializer):
     #Django models into json objects.
     poster = serializers.ReadOnlyField(source='poster.username')
     poster_id = serializers.ReadOnlyField(source='poster.id')
+    votes = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
-        fields = ['id','title','url','poster','poster_id','created']
+        fields = ['id','title','url','poster','poster_id','created','votes']
     #Serializers are basically a way that you can connect 
     #your fields and have some additional properties that
     #you can add later on. For eg. The 4 fields above
@@ -20,6 +22,9 @@ class PostSerializer(serializers.ModelSerializer):
     #default)are what is included in the models but we will
     #need the vote count as well, which we can add via 
     #serializer.
+
+    def get_votes(self, post):
+        return Vote.objects.filter(post=post).count()
 
 class VoteSerializer(serializers.ModelSerializer):
     #same as vote serializer
