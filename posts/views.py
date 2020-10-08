@@ -20,6 +20,18 @@ class PostList(generics.ListCreateAPIView):
         serializer.save(poster=self.request.user)
         #this sets the poster as the user itself while saving the data.
 
+class PostRetrieveDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.filter(pk=kwargs['pk'],poster=self.request.user)
+        if post.exists():
+            return self.destroy(request, *args, **kwargs)
+        else:
+            raise ValidationError('You do not have access to delete this post')
+
 class VoteCreate(generics.CreateAPIView, mixins.DestroyModelMixin):
     #This is only to create new votes and list all upvotes.
     serializer_class = VoteSerializer
